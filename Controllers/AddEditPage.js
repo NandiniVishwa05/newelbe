@@ -31,4 +31,25 @@ const insertFormData = ('/add', (req, res) => {
     });
 });
 
-module.exports = { insertFormData }
+const fetchformdetails = (request, response) => {
+    let uid = request.params.uid;
+    console.log(uid);
+
+    let query = `select * from userdetails where id = ${uid}`;
+    let query2 = `select hobby_id from user_hobbies as u join hobby as h on u.hobby_id = h.id where user_id = ${uid}`;
+    db.query(query, (err, data) => {
+        if (err) {
+            console.log(err);
+        } else if (data.length > 0) {
+            db.query(query2, (err2, data2) => {
+                data[0].hobby = data2
+                console.log(data2);
+                
+                response.json({ msg: "Datafound", data: data });
+            })
+        } else {
+            response.status(404).json({ msg: "DataNotFound" });
+        }
+    })
+}
+module.exports = { insertFormData, fetchformdetails }
